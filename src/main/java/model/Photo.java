@@ -14,6 +14,10 @@ public class Photo {
 
     private Rover rover;
 
+    public Photo(String sol) {
+        this.sol = sol;
+    }
+
     public Photo(){
         super();
     }

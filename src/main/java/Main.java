@@ -1,23 +1,6 @@
 import apirunner.ApiRunner;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import implementation.CameraService;
-import implementation.PhotoService;
-import model.Photo;
-import service.ServiceInterface;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-
-
 
 
 //class Main {
@@ -164,7 +147,7 @@ import java.util.concurrent.TimeUnit;
 //
 //}
 
-public class Main{
+public class Main {
 
     public static void main(String[] args) {
 

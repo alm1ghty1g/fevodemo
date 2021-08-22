@@ -1,16 +1,11 @@
 package apirunner;
 
+import cache.GuavaCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import implementation.CameraService;
-import implementation.PhotoService;
 import model.Camera;
 import model.Photo;
 import model.Rover;
@@ -22,24 +17,77 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class ApiRunner {
 
+  private List<Photo> photoListOuter;
+
+   private void checkCache() throws IOException {
+
+       if (GuavaCache.photoCache.asMap().isEmpty()){
+
+           apiRunner();
+
+//            Map<String, Photo> result = photoListOuter.stream().collect(Collectors.toMap(Photo::getId, Function.identity()));
+           Map<String, Photo> result = photoListOuter.stream().collect(Collectors.toMap(Photo::getId, Function.identity()));
+
+           GuavaCache.photoCache.asMap().putAll(result);
+
+       }
+       else  {
+
+           // check what data in cache and compare to required output for related key
+
+            // if !(List<images> exist)  || list.size() < 3 make a call to API and get another values + fill List properly and show as output;
+       }
+   }
+
+
+   private Map<String, List<String>> returnJsonResultMap() {
+
+
+       return null;
+   }
+
     private static final String API_KEY = "ETQtKwL9zdOgsd3Z1CpqpclDGdCfNZM9QBrIRxvd";
     private static final String BASE_KEY = "&api_key=";
     private static final String BASE_URL = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=";
-    private static String API_DATE = LocalDate.now().toString();
-    private static String API_URL = BASE_URL + API_DATE + BASE_KEY + API_KEY;
+    private static LocalDate API_DATE = LocalDate.now();
+    private static String API_URL = BASE_URL + API_DATE.toString() + BASE_KEY + API_KEY;
 
     public void apiRunner() throws IOException {
 
+        Map<String, List<String>> resultMap = new HashMap<>();
+        List<String> imageList = new ArrayList<>();
+
         HttpClient httpClient = new DefaultHttpClient();
+        LocalDate localDate = API_DATE;
 
         for (int i = 0; i < 10; i++) {
+
+            Photo photo = null;
+
+            try {
+                photo = GuavaCache.photoCache.get(localDate.toString());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            if (photo != null) {
+
+                imageList.add(photo.getImg_src());
+                resultMap.put(localDate.toString(),imageList);
+
+                continue;
+            }
 
             StringBuilder responseBody = new StringBuilder();
             HttpGet request = new HttpGet(API_URL);
@@ -50,29 +98,22 @@ public class ApiRunner {
             while ((line = rd.readLine()) != null) {
                 responseBody.append(line);
             }
-            parseMainObject(responseBody.toString());
+            parseMainObject(responseBody.toString(), localDate);
 
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(API_DATE, formatter);
             localDate = localDate.minusDays(1);
-            API_DATE = localDate.toString();
-            API_URL = BASE_URL + API_DATE + BASE_KEY + API_KEY;
+            API_URL = BASE_URL + localDate + BASE_KEY + API_KEY;
         }
     }
 
-    public String parseMainObject(String responseBody) {
+    private List<Photo> parseMainObject(String responseBody, LocalDate localDate) {
 
-        System.out.println("API_DATE--> " + API_DATE);
-
-        Photo photo;
+        Photo photo = new Photo();
         Camera camera;
         Rover rover;
 
         int index = 0;
 
         List<Photo> photoList = new ArrayList<>();
-
 
         JsonElement fileElement = JsonParser.parseString(responseBody);
         JsonObject fileObject = fileElement.getAsJsonObject();
@@ -81,14 +122,11 @@ public class ApiRunner {
         for (JsonElement element : jsonArrayOfPhotos) {
 
             photo = parsePhotoObject(element);
-
             camera = parseCameraObject(jsonArrayOfPhotos, index);
-
             rover = parseRoverObject(jsonArrayOfPhotos, index);
 
             photo.setCamera(camera);
             photo.setRover(rover);
-
 
             if (photo.getCamera().getName().equalsIgnoreCase("NAVCAM") &&
                     photo.getRover().getName().equalsIgnoreCase("Curiosity")) {
@@ -96,16 +134,19 @@ public class ApiRunner {
             }
             index++;
         }
-        printResult(photoList);
-        System.out.println(photoList.size());
+//        printResult(photoList);
 
-        return null;
+        // fill cache there
+
+        GuavaCache.photoCache.put(localDate.toString(), photo);
+//        System.out.println(photoList.size());
+
+        return photoList;
     }
 
     private Photo parsePhotoObject(JsonElement element) {
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         Photo photo = new Photo();
 
         try {
@@ -113,7 +154,6 @@ public class ApiRunner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return photo;
     }
 
@@ -138,7 +178,6 @@ public class ApiRunner {
     private Rover parseRoverObject(JsonArray jsonArrayOfPhotos, int index) {
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         Rover rover = new Rover();
 
         JsonElement roverElement = jsonArrayOfPhotos.get(index).getAsJsonObject();
