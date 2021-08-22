@@ -1,5 +1,7 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Photo {
 
     private String id;
@@ -8,9 +10,11 @@ public class Photo {
 
     private Camera camera;
 
-    private String img_src; // imgSrc
+    @JsonProperty("img_src")
+    private String imgSrc;
 
-    private String earth_date;
+    @JsonProperty("earth_date")
+    private String earthDate;
 
     private Rover rover;
 
@@ -22,12 +26,12 @@ public class Photo {
         super();
     }
 
-    public Photo(String id, String sol, Camera camera, String img_src, String earth_date, Rover rover) {
+    public Photo(String id, String sol, Camera camera, String imgSrc, String earthDate, Rover rover) {
         this.id = id;
         this.sol = sol;
         this.camera = camera;
-        this.img_src = img_src;
-        this.earth_date = earth_date;
+        this.imgSrc = imgSrc;
+        this.earthDate = earthDate;
         this.rover = rover;
     }
 
@@ -43,12 +47,12 @@ public class Photo {
         return camera;
     }
 
-    public String getImg_src() {
-        return img_src;
+    public String getImgSrc() {
+        return imgSrc;
     }
 
-    public String getEarth_date() {
-        return earth_date;
+    public String getEarthDate() {
+        return earthDate;
     }
 
     public Rover getRover() {
@@ -67,12 +71,12 @@ public class Photo {
         this.camera = camera;
     }
 
-    public void setImg_src(String img_src) {
-        this.img_src = img_src;
+    public void setImgSrc(String imgSrc) {
+        this.imgSrc = imgSrc;
     }
 
-    public void setEarth_date(String earth_date) {
-        this.earth_date = earth_date;
+    public void setEarthDate(String earthDate) {
+        this.earthDate = earthDate;
     }
 
     public void setRover(Rover rover) {
@@ -85,8 +89,8 @@ public class Photo {
                 "id='" + id + '\'' +
                 ", sol='" + sol + '\'' +
                 ", camera=" + camera +
-                ", img_src='" + img_src + '\'' +
-                ", earth_date='" + earth_date + '\'' +
+                ", imgSrc='" + imgSrc + '\'' +
+                ", earthDate='" + earthDate + '\'' +
                 ", rover=" + rover +
                 '}';
     }

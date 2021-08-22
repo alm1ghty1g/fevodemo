@@ -1,13 +1,14 @@
-package guavacache;
+package servicecacheimpl;
 
 
 import com.google.common.cache.CacheBuilder;
 import model.Photo;
-import service.Cache;
+import servicecache.Cache;
 
 import java.util.concurrent.TimeUnit;
 
-public class GuavaCacheImpl implements Cache {
+public class ServiceCacheImpl implements Cache {
+
 
 
     public static com.google.common.cache.Cache<String, Photo> photoCache = CacheBuilder.newBuilder()
@@ -18,7 +19,7 @@ public class GuavaCacheImpl implements Cache {
 
     @Override
     public Photo getPhoto(String key) {
-        return new Photo();
+        return photoCache.getIfPresent(key);
     }
 
     @Override

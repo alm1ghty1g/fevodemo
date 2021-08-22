@@ -1,15 +1,19 @@
 package model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Rover {
 
     private String id;
 
     private String name;
 
-    private String landing_date;
+    @JsonProperty("landing_date")
+    private String landingDate;
 
-    private String launch_date;
+    @JsonProperty("launch_date")
+    private String launchDate;
 
     private String status;
 
@@ -17,11 +21,11 @@ public class Rover {
         super();
     }
 
-    public Rover(String id, String name, String landing_date, String launch_date, String status) {
+    public Rover(String id, String name, String landingDate, String launchDate, String status) {
         this.id = id;
         this.name = name;
-        this.landing_date = landing_date;
-        this.launch_date = launch_date;
+        this.landingDate = landingDate;
+        this.launchDate = launchDate;
         this.status = status;
     }
 
@@ -33,12 +37,12 @@ public class Rover {
         return name;
     }
 
-    public String getLanding_date() {
-        return landing_date;
+    public String getLandingDate() {
+        return landingDate;
     }
 
-    public String getLaunch_date() {
-        return launch_date;
+    public String getLaunchDate() {
+        return launchDate;
     }
 
     public String getStatus() {
@@ -53,12 +57,12 @@ public class Rover {
         this.name = name;
     }
 
-    public void setLanding_date(String landing_date) {
-        this.landing_date = landing_date;
+    public void setLandingDate(String landingDate) {
+        this.landingDate = landingDate;
     }
 
-    public void setLaunch_date(String launch_date) {
-        this.launch_date = launch_date;
+    public void setLaunchDate(String launchDate) {
+        this.launchDate = launchDate;
     }
 
     public void setStatus(String status) {
@@ -70,8 +74,8 @@ public class Rover {
         return "Rover{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", landing_date='" + landing_date + '\'' +
-                ", launch_date='" + launch_date + '\'' +
+                ", landingDate='" + landingDate + '\'' +
+                ", launchDate='" + launchDate + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }

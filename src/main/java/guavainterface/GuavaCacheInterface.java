@@ -1,8 +1,8 @@
-package service;
+package guavainterface;
 
 import model.Photo;
 
-public interface Cache {
+public interface GuavaCacheInterface {
 
     Photo getPhoto(String key);
 

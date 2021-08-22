@@ -1,6 +1,8 @@
 import apirunner.ApiRunner;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 
 //class Main {
@@ -135,10 +137,10 @@ import java.io.IOException;
 ////        for (int i = 0; i < photoList.size(); i++) {
 ////            System.out.println(
 ////                    " NASA id: " + photoList.get(i).getId() +
-////                            " Earth Date: " + photoList.get(i).getEarth_date() +
+////                            " Earth Date: " + photoList.get(i).getEarthDate() +
 ////                            " Rover Name: " + photoList.get(i).getRover().getName() +
 ////                            " Camera name: " + photoList.get(i).getCamera().getName() +
-////                            " image " + photoList.get(i).getImg_src());
+////                            " image " + photoList.get(i).getImgSrc());
 ////            if (i == 2) {
 ////                break;
 ////            }
@@ -155,11 +157,18 @@ public class Main {
 
         try {
             apiRunner.apiRunner();
+
+
+            Map<String, List<String>> map = apiRunner.apiRunner();
+
+
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                System.out.println(entry.getKey() + " " + entry.getValue().toString());
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
 

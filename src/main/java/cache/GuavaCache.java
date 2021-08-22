@@ -1,5 +1,6 @@
 package cache;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -10,10 +11,39 @@ import java.util.concurrent.TimeUnit;
 
 public class GuavaCache {
 
-    public static LoadingCache<String, Photo> photoCache = CacheBuilder.newBuilder()
+    private static final GuavaCache guavaCache = new GuavaCache();
+
+    public static GuavaCache getInstance() {
+        return guavaCache;
+    }
+
+
+    public static com.google.common.cache.Cache<String, Photo> photoCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .build();
+
+
+
+
+
+    public static LoadingCache<String, Photo> photoCachee = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build(new PhotoCacheLoader());
+
+
+
+
+//    public static com.google.common.cache.Cache<String, Photo> photoCache = CacheBuilder.newBuilder()
+//            .maximumSize(1000)
+//            .expireAfterWrite(5, TimeUnit.MINUTES)
+//            .build();
+
+
+    public static Cache<String, Photo> getPhotoCache() {
+        return photoCache;
+    }
 }
 
 
