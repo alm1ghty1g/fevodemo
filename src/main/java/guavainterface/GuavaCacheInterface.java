@@ -1,11 +1,18 @@
 package guavainterface;
 
-import model.Photo;
+import java.util.List;
+import java.util.Map;
 
 public interface GuavaCacheInterface {
 
-    Photo getPhoto(String key);
 
-    void putPhoto(String key, Photo photo);
+
+    List<String> getPair(String key);
+
+    void putPair(String key, List<String> imageList);
+
+    void putAll(Map<String, List<String>> map);
+
+    Map<String, List<String>> asMap();
 
 }
